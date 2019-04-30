@@ -15,8 +15,11 @@ module Data.SVM
   , loadModel
   , saveModel
   , predict
+  , predictProba
   , withPrintFn
   , CSvmPrintFn
+  , R.c_srand
+  , defaultExtra
   ) where
 
 import           Control.Exception
@@ -29,7 +32,7 @@ import           Data.SVM.Raw          (CSvmModel, CSvmNode (..), CSvmParameter,
                                         c_svm_check_parameter,
                                         c_svm_cross_validation,
                                         c_svm_destroy_model, c_svm_load_model,
-                                        c_svm_predict, c_svm_save_model,
+                                        c_svm_predict, c_svm_predict_probability, c_svm_save_model,
                                         c_svm_set_print_string_function,
                                         c_svm_train, createSvmPrintFnPtr,
                                         defaultCParam)
@@ -219,6 +222,17 @@ predict (Model modelForeignPtr) vector = action
           action = withForeignPtr modelForeignPtr $ \modelPtr ->
                    withCSvmNodeArray vector $ \vectorPtr ->
                         realToFrac <$> c_svm_predict modelPtr vectorPtr
+
+-- |Predict a value for 'Vector' by using 'Model'
+predictProba :: Model -> Vector -> IO [Double]
+predictProba (Model modelForeignPtr) vector = action
+    where action :: IO [Double]
+          action = withForeignPtr modelForeignPtr $ \modelPtr ->
+                   allocaArray 2 $ \targetPtr ->
+                   withCSvmNodeArray vector $ \vectorPtr -> do
+-- double *prob_estimates=Malloc(double,svm_get_nr_class(submodel));
+                        _ <- c_svm_predict_probability modelPtr vectorPtr targetPtr
+                        fmap realToFrac <$> peekArray 2 targetPtr
 
 -- |Wrapper to change the libsvm output reporting function.
 --

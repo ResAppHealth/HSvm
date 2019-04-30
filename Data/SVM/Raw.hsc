@@ -130,6 +130,8 @@ foreign import ccall unsafe "svm.h svm_cross_validation" c_svm_cross_validation:
 
 foreign import ccall unsafe "svm.h svm_predict" c_svm_predict :: Ptr CSvmModel -> Ptr CSvmNode -> IO CDouble
 
+foreign import ccall unsafe "svm.h svm_predict_probability" c_svm_predict_probability :: Ptr CSvmModel -> Ptr CSvmNode -> Ptr CDouble -> IO CDouble
+
 foreign import ccall unsafe "svm.h svm_save_model" c_svm_save_model :: CString -> Ptr CSvmModel -> IO CInt
 
 foreign import ccall unsafe "svm.h svm_load_model" c_svm_load_model :: CString -> IO (Ptr CSvmModel)
@@ -140,7 +142,10 @@ foreign import ccall unsafe "svm.h &svm_destroy_model" c_svm_destroy_model :: Fi
 
 foreign import ccall unsafe "svm.h clone_model_support_vectors" c_clone_model_support_vectors :: Ptr CSvmModel -> IO CInt
 
+
 type CSvmPrintFn = CString -> IO ()
 
 foreign import ccall unsafe "svm.h svm_set_print_string_function" c_svm_set_print_string_function :: FunPtr CSvmPrintFn -> IO ()
 foreign import ccall unsafe "wrapper" createSvmPrintFnPtr :: CSvmPrintFn -> IO (FunPtr CSvmPrintFn)
+
+foreign import ccall "srand" c_srand :: CInt -> IO ()
