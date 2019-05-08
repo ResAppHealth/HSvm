@@ -124,9 +124,9 @@ instance Storable CSvmParameter where
 -- |Managed type for struct svm_model.
 data CSvmModel
 
-foreign import ccall unsafe "svm.h svm_train" c_svm_train :: Ptr CSvmProblem -> Ptr CSvmParameter -> IO (Ptr CSvmModel)
-                        
-foreign import ccall unsafe "svm.h svm_cross_validation" c_svm_cross_validation:: Ptr CSvmProblem -> Ptr CSvmParameter -> CInt -> Ptr CDouble -> IO () 
+foreign import ccall "svm.h svm_train" c_svm_train :: Ptr CSvmProblem -> Ptr CSvmParameter -> IO (Ptr CSvmModel)
+
+foreign import ccall "svm.h svm_cross_validation" c_svm_cross_validation:: Ptr CSvmProblem -> Ptr CSvmParameter -> CInt -> Ptr CDouble -> IO () 
 
 foreign import ccall unsafe "svm.h svm_predict" c_svm_predict :: Ptr CSvmModel -> Ptr CSvmNode -> IO CDouble
 
@@ -135,7 +135,7 @@ foreign import ccall unsafe "svm.h svm_predict_probability" c_svm_predict_probab
 foreign import ccall unsafe "svm.h svm_save_model" c_svm_save_model :: CString -> Ptr CSvmModel -> IO CInt
 
 foreign import ccall unsafe "svm.h svm_load_model" c_svm_load_model :: CString -> IO (Ptr CSvmModel)
-                        
+
 foreign import ccall unsafe "svm.h svm_check_parameter" c_svm_check_parameter :: Ptr CSvmProblem -> Ptr CSvmParameter -> CString
 
 foreign import ccall unsafe "svm.h &svm_destroy_model" c_svm_destroy_model :: FinalizerPtr CSvmModel
